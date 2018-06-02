@@ -1,0 +1,92 @@
+﻿<UserControl x:Class="TypeManager.View.ParaModify.StationSetControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TypeManager.View.ParaModify"
+             xmlns:vm="clr-namespace:TypeManager.ViewModel"
+             xmlns:dal="clr-namespace:TypeManager.DAL"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             mc:Ignorable="d" Background="LightSkyBlue"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/TypeManager;component/Dictionary/Style.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <vm:StationSetViewModel x:Key="StationSetVM"/>
+            <dal:IsSelectedItemToVisibility x:Key="StackVisibility"/>
+        </ResourceDictionary>
+        
+    </UserControl.Resources>
+    <DockPanel DataContext="{Binding Source={StaticResource StationSetVM}}">
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <TextBlock Text="产品型号：" Margin="5,0,0,0"/>
+            <ComboBox Name="cmbTypeList" IsEditable="True" ItemsSource="{Binding TypeList}" Width="160" Margin="10,0,0,0">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="KeyUp">
+                        <i:InvokeCommandAction Command="{Binding CmbDropDown}" CommandParameter="{Binding ElementName=cmbTypeList}"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="GotFocus">
+                        <i:InvokeCommandAction Command="{Binding GotFocusCommand}" CommandParameter="{Binding ElementName=cmbTypeList}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ComboBox>
+            <Button Name="btnSearch" Command="{Binding Search}" CommandParameter="{Binding ElementName=cmbTypeList,Path=Text}" Content="搜索" Margin="10,0,0,0"/>
+            <TextBlock Text="新型号名称:" Margin="20,0,0,0"/>
+            <TextBox Name="tbNewType" MinWidth="100" MaxWidth="200"/>
+            <Button Name="btnUpdateDB"  Content="添加新型号" Command="{Binding ShowInsertDBWindow}" CommandParameter="{Binding ElementName=tbNewType,Path=Text}" Margin="10,0,0,0"/>
+        </StackPanel>
+       
+        <GroupBox DockPanel.Dock="Bottom" Margin="10"  Header="参数信息"
+                   Visibility="{Binding ElementName=lviewInfo,Path=SelectedItem,Converter={StaticResource StackVisibility}}">
+            <StackPanel Margin="5">
+                <StackPanel DockPanel.Dock="Bottom" DataContext="{Binding ElementName=lviewInfo ,Path=SelectedItem}" 
+                    >
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock Text="产品型号:"/>
+                        <TextBox Text="{Binding ProductType}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock Text="站 别 I D:"/>
+                        <TextBox Text="{Binding StationID}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock Text="站别名称:"/>
+                        <TextBox Text="{Binding StationName}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock Text="是否可见:"/>
+                        <TextBox Text="{Binding StationVisible}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock Text="I d_K e y:"/>
+                        <TextBox Text="{Binding Id_Key}" IsHitTestVisible="False"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel DockPanel.Dock="Bottom" Margin="0,5,0,0">
+                    <Button Content="参数更新" Command="{Binding UpdateDB}" CommandParameter="{Binding ElementName=lviewInfo,Path=SelectedItem}" 
+                            HorizontalAlignment="Left"/>
+                </StackPanel>
+            </StackPanel>
+            
+        </GroupBox>
+
+        
+        <StatusBar DockPanel.Dock="Bottom">
+            <TextBlock Text="{Binding ElementName=lviewInfo, Path=SelectedIndex ,StringFormat=当前行号:\{0\}}"/>
+            <TextBlock Text="{Binding ElementName=lviewInfo,Path=Items.Count,StringFormat=总行数:\{0\}}"/>
+        </StatusBar>
+        <ListView  Name="lviewInfo"  ItemsSource="{Binding DisplayInfo}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="产品类型" DisplayMemberBinding="{Binding ProductType}"/>
+                    <GridViewColumn Header="站别ID" DisplayMemberBinding="{Binding StationID}"/>
+                    <GridViewColumn Header="站别名称" DisplayMemberBinding="{Binding StationName}"/>
+                    <GridViewColumn Header="是否可见" DisplayMemberBinding="{Binding StationVisible}"/>
+                    <GridViewColumn Header="IdKey" DisplayMemberBinding="{Binding Id_Key}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </DockPanel>
+</UserControl>

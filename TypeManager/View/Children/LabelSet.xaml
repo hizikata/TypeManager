@@ -1,0 +1,86 @@
+﻿<Window x:Class="TypeManager.View.Children.LabelSet"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TypeManager.View.Children"
+        xmlns:vm="clr-namespace:TypeManager.ViewModel"
+        mc:Ignorable="d"
+        Title="LabelSet" Height="450" Width="800">
+    <Window.Resources>
+        <vm:LabelSetViewModel x:Key="LabelSetVM"/>
+    </Window.Resources>
+    <DockPanel DataContext="{Binding Source={StaticResource LabelSetVM}}">
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <TextBlock Text="新型号名称:"/>
+            <TextBlock Name="tbNewType" MinWidth="100"/>
+            <Button Name="btnInsertDB" Content="表格数据插入数据库" Command="{Binding InsertDB}"/>
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Bottom" DataContext="{Binding ElementName=lViewInfo,Path=SelectedItem}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
+                    <TextBlock Text="产品标识"/>
+                    <TextBox Text="{Binding ProductSign}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
+                    <TextBlock Text="打印标签"/>
+                    <TextBox Text="{Binding PrintProductType}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0">
+                    <TextBlock Text="产品型号"/>
+                    <TextBox Text="{Binding ProductType}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0">
+                    <TextBlock Text="SN类型"/>
+                    <TextBox Text="{Binding SnType}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                    <TextBlock Text="托盘标签"/>
+                    <TextBox Text="{Binding TrayLabelTemplate}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
+                    <TextBlock Text="内箱标签"/>
+                    <TextBox Text="{Binding BoxingLabelTemplate}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
+                    <TextBlock Text="外箱标签"/>
+                    <TextBox Text="{Binding OutBoxLabelTemplate}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1">
+                    <TextBlock Text="HwUpdatePN"/>
+                    <TextBox Text="{Binding HwUpdataPN}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2">
+                    <TextBlock Text="描述"/>
+                    <TextBox Text="{Binding Memo}"/>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+        <ListView Name="lViewInfo" ItemsSource="{Binding DisplayInfo, Mode=OneWayToSource}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="产品标识" DisplayMemberBinding="{Binding ProductSign}"/>
+                    <GridViewColumn Header="打印型号" DisplayMemberBinding="{Binding PrintProductType}"/>
+                    <GridViewColumn Header="产品型号" DisplayMemberBinding="{Binding ProductType}"/>
+                    <GridViewColumn Header="SN类型" DisplayMemberBinding="{Binding SnType}"/>
+                    <GridViewColumn Header="托盘标签" DisplayMemberBinding="{Binding TrayLabelTemplate}"/>
+                    <GridViewColumn Header="内箱标签" DisplayMemberBinding="{Binding BoxingLabelTemplate}"/>
+                    <GridViewColumn Header="外箱标签" DisplayMemberBinding="{Binding OutBoxLabelTemplate}"/>
+                    <GridViewColumn Header="HwUpdatePN" DisplayMemberBinding="{Binding HwUpdatePN}"/>
+                    <GridViewColumn Header="描述" DisplayMemberBinding="{Binding Memo}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </DockPanel>
+</Window>

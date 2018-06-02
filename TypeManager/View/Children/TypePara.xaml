@@ -1,0 +1,151 @@
+﻿<Window x:Class="TypeManager.View.Children.TypePara"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TypeManager.View.Children"
+        xmlns:vm="clr-namespace:TypeManager.ViewModel"
+        mc:Ignorable="d"
+        Title="型号添加" Height="469.397" Width="750.862">
+    <Window.Resources>
+        <vm:TypeParaViewModel x:Key="TypeParaVM"/>
+    </Window.Resources>
+    <DockPanel DataContext="{Binding Source={StaticResource TypeParaVM}}">
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <Label Content="新型号名称:" VerticalContentAlignment="Center"/>
+            <Label Name="lbNewType"/>
+            <Button Name="btnInsertDB" Command="{Binding InsertDB}" Content="将表格内数据插入数据库"/>
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Bottom" DataContext="{Binding ElementName=dgInfo,Path=SelectedItem}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200*"/>
+                    <ColumnDefinition Width="200*"/>
+                    <ColumnDefinition Width="200*"/>
+                    <ColumnDefinition Width="200*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
+                    <TextBlock Text="产品型号:"/>
+                    <TextBox Text="{Binding ProductTypeName}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Text="条码长度:"/>
+                    <TextBox Text="{Binding TypeLength}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Text="识别码:"/>
+                    <TextBox Text="{Binding TypeSign, Mode=TwoWay}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Text="APD脚位:"/>
+                    <TextBox Text="{Binding ApdSign}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Text="产品类型:"/>
+                    <TextBox Text="{Binding TypeCatalog}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Text="识别码位置:"/>
+                    <TextBox Text="{Binding SnSign}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="TE计算:"/>
+                    <TextBox Text="{Binding TeCaculateMethod}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="包装类型:"/>
+                    <TextBox Text="{Binding PackingType}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="SMSR测试:"/>
+                    <TextBox Text="{Binding IsSmsrSpotTest}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="IMD2测试:"/>
+                    <TextBox Text="{Binding IsImd2SpotTest}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="是否可见:"/>
+                    <TextBox Text="{Binding TypeVisible}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="物料ID:"/>
+                    <TextBox Text="{Binding MaterialId}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+                    <TextBlock Text="对外型号:"/>
+                    <TextBox Text="{Binding ProductTypeCommon}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
+                    <TextBlock Text="条码检查长度:"/>
+                    <TextBox Text="{Binding CheckSnSubLength}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal">
+                    <TextBlock Text="YearSign:"/>
+                    <TextBox Text="{Binding YearSign}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal">
+                    <TextBlock Text="TO类型:"/>
+                    <TextBox Text="{Binding AlignType}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="4" Grid.Column="2" Orientation="Horizontal">
+                    <TextBlock Text="上传华为:"/>
+                    <TextBox Text="{Binding IsUploadHwData}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="5" Grid.Column="2" Orientation="Horizontal">
+                    <TextBlock Text="转换重工数据:"/>
+                    <TextBox Text="{Binding IsChangeToRedoData}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal">
+                    <TextBlock Text="镭射类型:"/>
+                    <TextBox Text="{Binding HousingLaserSign}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="3" Orientation="Horizontal">
+                    <TextBlock Text="TheOneTestType:"/>
+                    <TextBox Text="{Binding ThOneTestType}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2" Grid.Column="3" Orientation="Horizontal">
+                    <TextBlock Text="传输速率:"/>
+                    <TextBox Text="{Binding TransmitRate}"/>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+        <DataGrid Name="dgInfo" ItemsSource="{Binding TypeParaList,Mode=OneWayToSource}" AutoGenerateColumns="False" CanUserAddRows="False" 
+                                      CanUserSortColumns="False" Margin="10" AllowDrop="True" IsReadOnly="True">
+            <DataGrid.Columns  >
+                <DataGridTextColumn Header="产品型号" Binding="{Binding ProductTypeName}" />
+                <DataGridTextColumn Header="条码长度" Binding="{Binding TypeLength}"/>
+                <DataGridTextColumn Header="识别码" Binding="{Binding TypeSign}"/>
+                <DataGridTextColumn Header="Apd脚位" Binding="{Binding ApdSign}"/>
+                <DataGridTextColumn Header="产品类型" Binding="{Binding TypeCatalog}"/>
+                <DataGridTextColumn Header="识别码位置" Binding="{Binding SnSign}"/>
+                <DataGridTextColumn Header="Te计算" Binding="{Binding TeCaculateMethod}"/>
+                <DataGridTextColumn Header="包装类型" Binding="{Binding PackingType}"/>
+                <DataGridTextColumn Header="SMSR测试" Binding="{Binding IsSmsrSpotTest}"/>
+                <DataGridTextColumn Header="IMD2测试" Binding="{Binding IsImd2SpotTest}"/>
+                <DataGridTextColumn Header="是否可见" Binding="{Binding TypeVisible}"/>
+                <DataGridTextColumn Header="物料ID" Binding="{Binding MaterialId}"/>
+                <DataGridTextColumn Header="对外型号" Binding="{Binding ProductTypeCommon}"/>
+                <DataGridTextColumn Header="条码检查长度" Binding="{Binding CheckSnSubLength}"/>
+                <DataGridTextColumn Header="YearSign" Binding="{Binding YearSign}"/>
+                <DataGridTextColumn Header="TO类型" Binding="{Binding AlignType}"/>
+                <DataGridTextColumn Header="上传华为" Binding="{Binding IsUploadHwData}"/>
+                <DataGridTextColumn Header="转换重工数据" Binding="{Binding IsChangeToRedoData}"/>
+                <DataGridTextColumn Header="镭射类型" Binding="{Binding HousingLaserSign}"/>
+                <DataGridTextColumn Header="ThOneTestType" Binding="{Binding ThOneTestType}"/>
+                <DataGridTextColumn Header="传输速率" Binding="{Binding TransmitRate}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</Window>

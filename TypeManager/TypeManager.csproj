@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3B69730A-BEAD-4C06-BA87-597ADB0283EC}</ProjectGuid>
+    <ProjectGuid>{3D5D0651-4017-4BA2-BD4E-2583C1262886}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>TypeManager</RootNamespace>
     <AssemblyName>TypeManager</AssemblyName>
@@ -32,9 +32,29 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>TypeManager.App</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\bitbug_favicon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.1.1.35051, Culture=neutral, PublicKeyToken=0e453835af4ee6ce, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.1.1.0\lib\net40\GalaSoft.MvvmLight.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.1.1.35049, Culture=neutral, PublicKeyToken=f46ff315b1088208, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.1.1.0\lib\net40\GalaSoft.MvvmLight.Extras.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Windows.Design.Interaction, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.1.1.0\lib\net40\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -46,23 +66,130 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.AvalonDock">
+      <HintPath>..\..\..\..\WpfTest\WpfTest\bin\Debug\Xceed.Wpf.AvalonDock.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
+    <Compile Include="CommonClass\BackgroundConverter.cs" />
+    <Compile Include="CommonClass\IPCConnection.cs" />
+    <Compile Include="DAL\CommonMethods.cs" />
+    <Compile Include="DAL\CommonParaService.cs" />
+    <Compile Include="DAL\IsSelectedItemToVisibility.cs" />
+    <Compile Include="DAL\LabelSetService.cs" />
+    <Compile Include="DAL\MaterialRegisterService.cs" />
+    <Compile Include="DAL\MaterialSetService.cs" />
+    <Compile Include="DAL\ReportExportService.cs" />
+    <Compile Include="DAL\StationSetService.cs" />
+    <Compile Include="DAL\ThreeInOneService.cs" />
+    <Compile Include="Model\CommonParaSet.cs" />
+    <Compile Include="Model\EnumeData.cs" />
+    <Compile Include="Model\LivParaModel.cs" />
+    <Compile Include="Model\MaterialOrderParameter.cs" />
+    <Compile Include="Model\PackingExportPara.cs" />
+    <Compile Include="Model\ProductMatchSpecify.cs" />
+    <Compile Include="Model\ProductParameter.cs" />
+    <Compile Include="Model\ProductStation.cs" />
+    <Compile Include="Model\SenParaModel.cs" />
+    <Compile Include="Model\SenPara\GainSet.cs" />
+    <Compile Include="Model\SenPara\IdarkSet.cs" />
+    <Compile Include="Model\SenPara\IopSet.cs" />
+    <Compile Include="Model\SenPara\IoSet.cs" />
+    <Compile Include="Model\SenPara\ProductType.cs" />
+    <Compile Include="Model\SenPara\Rssi1Set.cs" />
+    <Compile Include="Model\SenPara\Rssi2Set.cs" />
+    <Compile Include="Model\SenPara\SatSet.cs" />
+    <Compile Include="Model\SenPara\SenParaBase.cs" />
+    <Compile Include="Model\SenPara\SenSet.cs" />
+    <Compile Include="Model\SenPara\TiaSet.cs" />
+    <Compile Include="Model\SenPara\TxCrossTalkSet.cs" />
+    <Compile Include="Model\SenPara\VbrSet.cs" />
+    <Compile Include="Model\TypeParaModel.cs" />
+    <Compile Include="Model\PropertyInfo.cs" />
+    <Compile Include="DAL\Repository.cs" />
+    <Compile Include="Model\TemplateRedoSN.cs" />
+    <Compile Include="Model\User.cs" />
+    <Compile Include="ViewModel\CommandViewModel.cs" />
+    <Compile Include="ViewModel\CommonParaViewModel.cs" />
+    <Compile Include="ViewModel\FrmMainViewModel.cs" />
+    <Compile Include="ViewModel\LabelSetViewModel.cs" />
+    <Compile Include="ViewModel\LivParaSetViewModel.cs" />
+    <Compile Include="ViewModel\MaterialRegisterViewModel.cs" />
+    <Compile Include="ViewModel\MaterialSetViewModel.cs" />
+    <Compile Include="ViewModel\ReportExportViewModel.cs" />
+    <Compile Include="ViewModel\SenParaSetViewModel.cs" />
+    <Compile Include="ViewModel\StationSetViewModel.cs" />
+    <Compile Include="ViewModel\TestViewModel.cs" />
+    <Compile Include="ViewModel\ThreeInOneParaViewModel.cs" />
+    <Compile Include="ViewModel\TypeParaViewModel.cs" />
+    <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
+    <Compile Include="View\Children\CommonPara.xaml.cs">
+      <DependentUpon>CommonPara.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Children\LabelSet.xaml.cs">
+      <DependentUpon>LabelSet.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Children\ReportExport.xaml.cs">
+      <DependentUpon>ReportExport.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Children\StationSet.xaml.cs">
+      <DependentUpon>StationSet.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Children\ThreeInOne.xaml.cs">
+      <DependentUpon>ThreeInOne.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Children\TypePara.xaml.cs">
+      <DependentUpon>TypePara.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\FrmMain.xaml.cs">
+      <DependentUpon>FrmMain.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\FrmTest.xaml.cs">
+      <DependentUpon>FrmTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\LivAndSen\Child\IopParaSet.xaml.cs">
+      <DependentUpon>IopParaSet.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\LivAndSen\LivParaSet.xaml.cs">
+      <DependentUpon>LivParaSet.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\LivAndSen\SenParaSet.xaml.cs">
+      <DependentUpon>SenParaSet.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ParaModify\CommonParaControl.xaml.cs">
+      <DependentUpon>CommonParaControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ParaModify\LabelSetControl.xaml.cs">
+      <DependentUpon>LabelSetControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ParaModify\MaterialRegister.xaml.cs">
+      <DependentUpon>MaterialRegister.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ParaModify\MaterialSetControl.xaml.cs">
+      <DependentUpon>MaterialSetControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ParaModify\ReportExport.xaml.cs">
+      <DependentUpon>ReportExport.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ParaModify\StationSetControl.xaml.cs">
+      <DependentUpon>StationSetControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ParaModify\TestControl.xaml.cs">
+      <DependentUpon>TestControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ParaModify\ThreeInOneParaControl.xaml.cs">
+      <DependentUpon>ThreeInOneParaControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ParaModify\TypeParaControl.xaml.cs">
+      <DependentUpon>TypeParaControl.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -83,10 +210,110 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Dictionary\Style.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Children\CommonPara.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Children\LabelSet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Children\ReportExport.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Children\StationSet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Children\ThreeInOne.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Children\TypePara.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\FrmMain.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\FrmTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\LivAndSen\Child\IopParaSet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\LivAndSen\LivParaSet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\LivAndSen\SenParaSet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ParaModify\CommonParaControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ParaModify\LabelSetControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ParaModify\MaterialRegister.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ParaModify\MaterialSetControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ParaModify\ReportExport.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ParaModify\StationSetControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ParaModify\TestControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ParaModify\ThreeInOneParaControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ParaModify\TypeParaControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="DeveloperMenu.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\XuxzLib\XuxzLib.csproj">
+      <Project>{6da74fb1-1b1a-4e29-ab63-ad68ec965d3d}</Project>
+      <Name>XuxzLib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\bitbug_favicon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

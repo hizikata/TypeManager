@@ -1,0 +1,86 @@
+﻿<Window x:Class="TypeManager.View.Children.ThreeInOne"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TypeManager.View.Children"
+        xmlns:vm="clr-namespace:TypeManager.ViewModel"
+        mc:Ignorable="d"
+        Title="ThreeInOne" Height="450" Width="800">
+    <Window.Resources>
+        <vm:ThreeInOneParaViewModel x:Key="ThreeInOneVM"/>
+    </Window.Resources>
+    <DockPanel DataContext="{Binding Source={StaticResource ThreeInOneVM}}">
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <TextBlock Text="新型号名称:"/>
+            <TextBlock Name="tbNewType" MinWidth="100"/>
+            <Button Name="btnInsertDB" Content="表格数据插入数据库" Command="{Binding InsertDB}"/>
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Bottom" DataContext="{Binding ElementName=lViewInfo,Path=SelectedItem}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
+                    <TextBlock Text="程序名称"/>
+                    <TextBox Text="{Binding ApplicationName}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
+                    <TextBlock Text="产品型号"/>
+                    <TextBox Text="{Binding ProductType}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0">
+                    <TextBlock Text="站别"/>
+                    <TextBox Text="{Binding ProductStation}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0">
+                    <TextBlock Text="参数名称"/>
+                    <TextBox Text="{Binding ParameterName}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                    <TextBlock Text="参数值"/>
+                    <TextBox Text="{Binding ParameterValue}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
+                    <TextBlock Text="当前温度"/>
+                    <TextBox Text="{Binding CurrentTemperature}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
+                    <TextBlock Text="描述"/>
+                    <TextBox Text="{Binding Memo}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1">
+                    <TextBlock Text="操作人员"/>
+                    <TextBox Text="{Binding OpPerson}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2">
+                    <TextBlock Text="操作日期"/>
+                    <TextBox Text="{Binding OpDate}"/>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+        <ListView Name="lViewInfo" ItemsSource="{Binding DisplayInfo, Mode=OneWayToSource}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="程序名称" DisplayMemberBinding="{Binding ApplicationName}"/>
+                    <GridViewColumn Header="产品型号" DisplayMemberBinding="{Binding ProductType}"/>
+                    <GridViewColumn Header="站别" DisplayMemberBinding="{Binding ProductStation}"/>
+                    <GridViewColumn Header="参数名称" DisplayMemberBinding="{Binding ParameterName}"/>
+                    <GridViewColumn Header="参数值" DisplayMemberBinding="{Binding ParameterValue}"/>
+                    <GridViewColumn Header="当前温度" DisplayMemberBinding="{Binding CurrentTemprature}"/>
+                    <GridViewColumn Header="描述" DisplayMemberBinding="{Binding Memo}"/>
+                    <GridViewColumn Header="操作人员" DisplayMemberBinding="{Binding OpPerson}"/>
+                    <GridViewColumn Header="操作日期" DisplayMemberBinding="{Binding OpDate}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </DockPanel>
+</Window>

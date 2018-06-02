@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<root>
+  <Menu Title="测试页面">
+    <MenuItem Title="测试页面" tag="ForTest"/>
+  </Menu>
+  <Menu Title="型号添加">
+    <MenuItem Title="图片添加" tag="ProductImage"/>
+  </Menu>
+  <Menu Title="参数更改">
+    <MenuItem Title="型号参数" tag="TypePara"/>
+    <MenuItem Title="站别设置" tag="StationSet"/>
+    <MenuItem Title="通用参数" tag="CommonPara"/>
+    <MenuItem Title="三合一参数" tag="ThreeInOnePara"/>
+    <MenuItem Title="标签设置" tag="LabelSet"/>
+    <MenuItem Title="测报导出" tag="ReportExport"/>
+    <MenuItem Title="物料设置" tag="MaterialSet"/>
+    <MenuItem Title="物料注册" tag="MaterialRegister"/>
+  </Menu>
+  <Menu Title="LIV参数更改">
+  </Menu>
+  <Menu Title="SEN参数更改">
+  </Menu>
+  <Menu Title="流程卡管理">
+  </Menu>
+  <Menu Title="标签模板管理">
+  </Menu>
+</root>

@@ -1,0 +1,132 @@
+﻿<UserControl x:Class="TypeManager.View.ParaModify.ThreeInOneParaControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TypeManager.View.ParaModify"
+             xmlns:vm="clr-namespace:TypeManager.ViewModel"
+             xmlns:dal="clr-namespace:TypeManager.DAL"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             Background="LightSkyBlue"
+             mc:Ignorable="d" >
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/TypeManager;component/Dictionary/Style.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <vm:ThreeInOneParaViewModel x:Key="ThreeInOneParaVM"/>
+            <dal:IsSelectedItemToVisibility x:Key="StackVisibility"/>
+        </ResourceDictionary>
+        
+    </UserControl.Resources>
+    <DockPanel DataContext="{Binding Source={StaticResource ThreeInOneParaVM}}">
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <TextBlock Text="产品型号:" Margin="5,0,0,0" Padding="0,3"/>
+            <ComboBox IsEditable="True" Name="cmbType" ItemsSource="{Binding TypeList}" Width="160" Margin="10,0,0,0">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="KeyUp">
+                        <i:InvokeCommandAction Command="{Binding CmbDropDown}" CommandParameter="{Binding ElementName=cmbType}"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="GotFocus">
+                        <i:InvokeCommandAction Command="{Binding GotFocusCommand}" CommandParameter="{Binding ElementName=cmbType}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ComboBox>
+            <Button Name="btnSearch" Content="搜索" Command="{Binding Search}" CommandParameter="{Binding ElementName=cmbType,Path=Text}" Margin="10,0,0,0"/>
+            <TextBlock Text="新型号名称:" Margin="10,0,0,0" Padding="0,3"/>
+            <TextBox x:Name="tbNewType"  MinWidth="100"/>
+            <Button Name="btnNewType" Content="添加型号" Command="{Binding ShowInsertDBWindow}" CommandParameter="{Binding ElementName=tbNewType,Path=Text}"/>
+        </StackPanel>
+        <GroupBox Header="参数信息" DockPanel.Dock="Bottom" Margin="10"
+                  Visibility="{Binding ElementName=lViewInfo,Path=SelectedItem,Converter={StaticResource StackVisibility}}">
+            <StackPanel Margin="5">
+                <StackPanel DataContext="{Binding ElementName=lViewInfo,Path=SelectedItem}">
+                    <Grid>
+                        <Grid.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Padding" Value="0,6,0,0"/>
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200*"/>
+                            <ColumnDefinition Width="200*"/>
+                            <ColumnDefinition Width="200*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
+                            <TextBlock Text="程序名称:"/>
+                            <TextBox Text="{Binding ApplicationName}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
+                            <TextBlock Text="产品型号:"/>
+                            <TextBox Text="{Binding ProductType}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0">
+                            <TextBlock Text="站       别:"/>
+                            <TextBox Text="{Binding ProductStation}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0">
+                            <TextBlock Text="参数名称:"/>
+                            <TextBox Text="{Binding ParameterName}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                            <TextBlock Text="参  数 值:"/>
+                            <TextBox Text="{Binding ParameterValue}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
+                            <TextBlock Text="当前温度:"/>
+                            <TextBox Text="{Binding CurrentTemperature}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
+                            <TextBlock Text="描       述:"/>
+                            <TextBox Text="{Binding Memo}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1">
+                            <TextBlock Text="操作人员:"/>
+                            <TextBox Text="{Binding OpPerson}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2">
+                            <TextBlock Text="操作日期:"/>
+                            <TextBox Text="{Binding OpDate}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="2">
+                            <TextBlock Text="Id_Key:"/>
+                            <TextBox Text="{Binding Id_Key}"  IsHitTestVisible="False" Margin="10,0,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+                <StackPanel DataContext="{Binding Source={StaticResource ThreeInOneParaVM}}">
+                    <Button Padding="3" Margin="5" Name="btnInsertDB" Command="{Binding UpdateDB}"
+                            CommandParameter="{Binding ElementName=lViewInfo, Path=SelectedItem}"
+                            Content="参数更新" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+       
+        <StatusBar DockPanel.Dock="Bottom">
+            <TextBlock Text="{Binding ElementName=lViewInfo, Path=SelectedIndex ,StringFormat=当前行号:\{0\}}"/>
+            <TextBlock Text="{Binding ElementName=lViewInfo,Path=Items.Count,StringFormat=总行数:\{0\}}"/>
+        </StatusBar>
+        <ListView Name="lViewInfo" MinHeight="100" ItemsSource="{Binding DisplayInfo}" ItemContainerStyle="{x:Null}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="程序名称" DisplayMemberBinding="{Binding ApplicationName}"/>
+                    <GridViewColumn Header="产品型号" DisplayMemberBinding="{Binding ProductType}"/>
+                    <GridViewColumn Header="站别" DisplayMemberBinding="{Binding ProductStation}"/>
+                    <GridViewColumn Header="参数名称" DisplayMemberBinding="{Binding ParameterName}"/>
+                    <GridViewColumn Header="参数值" DisplayMemberBinding="{Binding ParameterValue}"/>
+                    <GridViewColumn Header="当前温度" DisplayMemberBinding="{Binding CurrentTemperature}"/>
+                    <GridViewColumn Header="描述" DisplayMemberBinding="{Binding Memo}"/>
+                    <GridViewColumn Header="操作人员" DisplayMemberBinding="{Binding OpPerson}"/>
+                    <GridViewColumn Header="操作日期" DisplayMemberBinding="{Binding OpDate}"/>
+                    <GridViewColumn Header="IdKey" DisplayMemberBinding="{Binding Id_Key}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </DockPanel>
+</UserControl>
