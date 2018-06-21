@@ -5,7 +5,7 @@ using System.Text;
 
 namespace XuxzLib.Converter
 {
-    class ListAndDataTable
+    public class ListAndDataTable
     {
     }
 }

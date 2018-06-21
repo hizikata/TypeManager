@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using TypeManager.Assist;
 using System.Windows.Data;
 
 namespace TypeManager.DAL
@@ -15,7 +16,12 @@ namespace TypeManager.DAL
             if (value == null)
                 return Visibility.Hidden;
             else
+            {
+               
                 return Visibility.Visible;
+                
+            }
+                
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

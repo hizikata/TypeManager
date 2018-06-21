@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:TypeManager.ViewModel"
-             xmlns:dal="clr-namespace:TypeManager.DAL" 
+             xmlns:dal="clr-namespace:TypeManager.DAL"  DataContext="{Binding Source={StaticResource locator}, Path=TypePara}"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:local="clr-namespace:TypeManager.View.ParaModify" Background="LightSkyBlue"
              mc:Ignorable="d" d:DesignWidth="913.678"  MinWidth="900"
@@ -31,14 +31,13 @@
                 </i:Interaction.Triggers>-->
             </ComboBox>
             <Button Content="搜索" Command="{Binding Search}" CommandParameter="{Binding ElementName=cmbProductType, Path=Text}" Margin="5,0,5,0"/>
-            <TextBlock Text="新型号名称:" Margin="50,0,0,0"/>
-            <TextBox Name="tbNewType" MinWidth="100" MaxWidth="200"/>
-            <Button Content="插入新型号" Command="{Binding ShowInsertDBWindow}" CommandParameter="{Binding ElementName=tbNewType, Path=Text}"  Margin="5,0,5,0" Padding="3,0,3,0"/>
+            <StackPanel Orientation="Horizontal" Visibility="{Binding CurrentPrivilege, Converter={StaticResource priConverter}}">
+                <TextBlock Text="新型号名称:" Margin="50,0,0,0"/>
+                <TextBox Name="tbNewType" MinWidth="100" MaxWidth="200"/>
+                <Button Content="插入新型号" Command="{Binding ShowInsertDBWindow}" CommandParameter="{Binding ElementName=tbNewType, Path=Text}"  Margin="5,0,5,0" Padding="3,0,3,0"/>
+            </StackPanel>
         </StackPanel>
-        <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center" Margin="10,5,10,50"
-                    Visibility="{Binding ElementName=dgInfo,Path=SelectedItem,Converter={StaticResource StackVisibility}}">
-            <Button x:Name="btnUpdateDB" Content="参数更新" Padding="10,5" Command="{Binding UpdateDB}" CommandParameter="{Binding ElementName=dgInfo,Path=SelectedItem}"/>
-        </StackPanel>
+        
         <GroupBox Header="参数信息" DockPanel.Dock="Bottom" Margin="10"
                   Visibility="{Binding ElementName=dgInfo, Path=SelectedItem, Converter={StaticResource StackVisibility}}">
             <StackPanel Margin="5">
@@ -67,7 +66,7 @@
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
                             <TextBlock Text="产品型号:"/>
-                            <TextBox Text="{Binding ProductTypeName}" IsHitTestVisible="False"/>
+                            <TextBox Name="tbProductType" Text="{Binding ProductTypeName}" IsHitTestVisible="False"/>
                         </StackPanel>
                         <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
                             <TextBlock Text="条码长度:"/>
@@ -162,6 +161,16 @@
                         <!--DataContext 设置有问题，Command绑定无效-->
                         <!--<Button Name="btnUpdateDB" Content="更新数据"   Grid.Row="4" Grid.Column="3" HorizontalAlignment="Left"  Width="100" Grid.ColumnSpan="2"/>-->
                     </Grid>
+                </StackPanel>
+                <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center" Margin="10,5,10,50">
+                    <StackPanel.Visibility>
+                        <MultiBinding Converter="{StaticResource btnConverter}">
+                            <Binding ElementName="tbProductType" Path="Text"/>
+                            <Binding Path="CurrentPrivilege"/>
+                        </MultiBinding>
+                    </StackPanel.Visibility>
+                <Button x:Name="btnUpdateDB" Content="参数更新" Padding="10,5" 
+                        Command="{Binding UpdateDB}" CommandParameter="{Binding ElementName=dgInfo,Path=SelectedItem}"/>
                 </StackPanel>
             </StackPanel>
         </GroupBox>

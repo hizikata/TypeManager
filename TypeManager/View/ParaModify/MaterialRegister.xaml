@@ -23,7 +23,7 @@
             <ComboBox Name="cmbTypeList" Width="120" ItemsSource="{Binding TypeList}" Margin="5,0,5,0"/>
             <Button Name="btnSearch" Content="搜索" Command="{Binding Search}" CommandParameter="{Binding ElementName=cmbTypeList,Path=Text}" Margin="5,0,5,0"/>
         </StackPanel>
-        
+
         <GroupBox DockPanel.Dock="Bottom" Header="参数更新" Margin="10"
                   Visibility="{Binding ElementName=lViewInfo,Path=SelectedItem,Converter={StaticResource StackVisibility}}">
             <StackPanel Margin="5,10">
@@ -56,7 +56,7 @@
                         <TextBox Text="{Binding Id_Key}" IsHitTestVisible="False" MinWidth="80" Margin="0,2,0,2"/>
                     </StackPanel>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="10" >
+                <StackPanel Orientation="Horizontal" Margin="10"  Visibility="{Binding CurrentPrivilege, Converter={StaticResource MateiralRegister}}">
                     <Button Content="参数更新" Command="{Binding UpdateDB}" CommandParameter="{Binding ElementName=lViewInfo,Path=SelectedItem}" />
                     <Button Content="插入新数据" Command="{Binding InsertDB}" CommandParameter="{Binding ElementName=lViewInfo,Path=SelectedItem}" />
                 </StackPanel>

@@ -53,6 +53,7 @@ namespace TypeManager.ViewModel
             SimpleIoc.Default.Register<MaterialRegisterViewModel>();
             SimpleIoc.Default.Register<LivParaSetViewModel>();
             SimpleIoc.Default.Register<SenParaSetViewModel>();
+            SimpleIoc.Default.Register<LoginViewModel>();
         }
         public TestViewModel Test
         {
@@ -136,6 +137,13 @@ namespace TypeManager.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<SenParaSetViewModel>();
+            }
+        }
+        public LoginViewModel Login
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<LoginViewModel>();
             }
         }
         public static void Cleanup()

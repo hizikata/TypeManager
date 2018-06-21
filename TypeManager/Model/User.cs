@@ -7,12 +7,30 @@ namespace TypeManager.Model
 {
     public class User
     {
-        public int Id_Key { get; set; }
-        public string LoginId { get; set; }
-        public string LoginPwd { get; set; }
-        public string AdminName { get; set; }
-        public string WorkStation { get; set; }
-        public string Privilege { get; set; }
-        
+        /// <summary>
+        /// 用户工号
+        /// </summary>
+        public string UserId { get; set; }
+        /// <summary>
+        /// 用户名
+        /// </summary>
+        public string UserName { get; set; }
+        /// <summary>
+        /// 所属角色
+        /// </summary>
+        public string RoleName { get; set; }
+        /// <summary>
+        /// 所属角色编号
+        /// </summary>
+        public string RoleId { get; set; }
+        /// <summary>
+        /// 用户组编号
+        /// </summary>
+        public string GroupId { get; set; }
+        /// <summary>
+        /// 用户组
+        /// </summary>
+        public string GroupName { get; set; }
+
     }
 }

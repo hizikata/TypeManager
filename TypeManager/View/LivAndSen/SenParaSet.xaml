@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TypeManager.View.LivAndSen"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:vm="clr-namespace:TypeManager.ViewModel"
              xmlns:dal="clr-namespace:TypeManager.DAL"
              mc:Ignorable="d" Loaded="UserControl_Loaded"           
@@ -15,18 +16,34 @@
             </ResourceDictionary.MergedDictionaries>
             <vm:SenParaSetViewModel x:Key="senParaSet"/>
             <dal:IsSelectedItemToVisibility x:Key="StackVisibility"/>
+            <dal:ComboBoxConverter x:Key="cmbConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <DockPanel DataContext="{Binding Source={StaticResource senParaSet}}">
         <StackPanel DockPanel.Dock="Top">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="型号:"/>
-                <ComboBox x:Name="cmbProductType" Width="170" ItemsSource="{Binding ListProduct}"/>
+                <ComboBox x:Name="cmbProductType" Width="170" ItemsSource="{Binding ListProduct}"
+                          IsEditable="True">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="KeyUp">
+                            <i:InvokeCommandAction Command="{Binding CmbDropDown}" CommandParameter="{Binding ElementName=cmbProductType}"/>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="GotFocus">
+                            <i:InvokeCommandAction Command="{Binding GotFocusCommand}" CommandParameter="{Binding ElementName=cmbProductType}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
                 <Button x:Name="btnLoadData" Content="数据载入" Command="{Binding LoadCommand}"
                     CommandParameter="{Binding ElementName=cmbProductType, Path=SelectedItem}"/>
             </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="当前操作型号："/>
+                <TextBlock Name="tbkCurrentType" Text="{Binding CurrentType}" Background="SkyBlue"/>
+            </StackPanel>
         </StackPanel>
-        <ListView DockPanel.Dock="Top" ItemsSource="{Binding ListSenPara}">
+        <ListView DockPanel.Dock="Top" ItemsSource="{Binding ListSenPara}"
+                  x:Name="liView">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="参数名称" DisplayMemberBinding="{Binding ParaName}"/>
@@ -37,8 +54,51 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <StackPanel DockPanel.Dock="Bottom">
+        <GroupBox DockPanel.Dock="Bottom" Header="参数更新" Visibility="{Binding ElementName=liView,Path=SelectedItem ,Converter={StaticResource StackVisibility}}">
+            <StackPanel>
+                <Grid DataContext="{Binding ElementName=liView,Path=SelectedItem}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0" Margin="5">
+                        <StackPanel DockPanel.Dock="Bottom" >
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="参数名称:"/>
+                                <TextBox Text="{Binding ParaName}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="EnableTest:"/>
+                                <ComboBox Width="100" x:Name="cmbBoolean"
+                                          SelectedIndex="{Binding EnableTest, Converter={StaticResource cmbConverter}}"/>
+                            </StackPanel>
 
-        </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                    <Grid Grid.Column="1" Margin="5">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Max:"/>
+                                <TextBox Text="{Binding Max}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Min:"/>
+                                <TextBox Text="{Binding Min}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+                <Button x:Name="btnUpdate" Content="更新" HorizontalAlignment="Left" Margin="180,0"
+                        Command="{Binding UpdateCommand}" CommandParameter="{Binding ElementName=liView, Path=SelectedItem}">
+                    <Button.Visibility>
+                        <MultiBinding Converter="{StaticResource btnConverter}">
+                            <Binding ElementName="tbkCurrentType" Path="Text"/>
+                            <Binding Path="CurrentPrivilege"/>
+                        </MultiBinding>
+                    </Button.Visibility>
+                </Button>
+            </StackPanel>
+           
+        </GroupBox>
     </DockPanel>
 </UserControl>

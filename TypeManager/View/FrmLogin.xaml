@@ -1,0 +1,43 @@
+﻿<Window x:Class="TypeManager.View.FrmLogin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TypeManager.View" WindowStartupLocation="CenterScreen"
+        mc:Ignorable="d" WindowStyle="None" AllowsTransparency="True"
+        Title="FrmLogin" Height="250" Width="400"
+        DataContext="{Binding Source={StaticResource locator}, Path=Login}">
+    <Window.Background>
+        <ImageBrush ImageSource="/TypeManager;component/Resources/Login.png"/>
+    </Window.Background>
+    <Window.Resources>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="AliceBlue"/>
+            <Setter Property="BorderBrush" Value="LightSkyBlue"/>
+           
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="27*"/>
+            <ColumnDefinition Width="46*"/>
+            <ColumnDefinition Width="120*"/>
+            <ColumnDefinition Width="207*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="55*"/>
+            <RowDefinition Height="36"/>
+            <RowDefinition Height="36"/>
+            <RowDefinition Height="36"/>
+            <RowDefinition Height="79*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="工号:" FontFamily="Microsoft YaHei" FontSize="16" FontWeight="Bold" Margin="0,10,0,0" Foreground="#FF068BA8"/>
+        <TextBlock Grid.Row="2" Grid.Column="1" Text="密码:" FontFamily="Microsoft YaHei" FontSize="16" FontWeight="Bold" Margin="0,8,0,0" Foreground="#FF068BA8"/>
+        <TextBox x:Name="tbUserId" Grid.Row="1" Grid.Column="2" Height="20" Margin="5,8,10,8" KeyUp="tbUserId_KeyUp"/>
+        <PasswordBox x:Name="pdbPwd"  Grid.Row="2" Grid.Column="2" Height="20" Margin="5,8,10,8" KeyUp="pdbPwd_KeyUp"/>
+        <Button x:Name="btnLogin" Grid.Row="3" Grid.Column="1" Content="登陆" Grid.ColumnSpan="2" Margin="19,10,76,0" Height="26" FontFamily="Microsoft YaHei" FontSize="14"
+                Command="{Binding LoginCommand}"/>
+        <Button x:Name="btnCancel" Grid.Row="3" Grid.Column="2" Content="取消" Margin="55,0,0,0" VerticalAlignment="Bottom" Height="27" FontFamily="Microsoft YaHei" FontSize="14"
+                Click="btnCancel_Click"/>
+    </Grid>
+</Window>

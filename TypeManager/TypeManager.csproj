@@ -75,12 +75,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Assist\Privilege.cs" />
     <Compile Include="CommonClass\BackgroundConverter.cs" />
     <Compile Include="CommonClass\IPCConnection.cs" />
+    <Compile Include="DAL\ComboBoxConverter.cs" />
     <Compile Include="DAL\CommonMethods.cs" />
     <Compile Include="DAL\CommonParaService.cs" />
+    <Compile Include="DAL\Converter.cs" />
     <Compile Include="DAL\IsSelectedItemToVisibility.cs" />
     <Compile Include="DAL\LabelSetService.cs" />
+    <Compile Include="DAL\LoginService.cs" />
     <Compile Include="DAL\MaterialRegisterService.cs" />
     <Compile Include="DAL\MaterialSetService.cs" />
     <Compile Include="DAL\ReportExportService.cs" />
@@ -114,18 +118,19 @@
     <Compile Include="Model\TemplateRedoSN.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="ViewModel\CommandViewModel.cs" />
-    <Compile Include="ViewModel\CommonParaViewModel.cs" />
+    <Compile Include="ViewModel\ParaModify\CommonParaViewModel.cs" />
     <Compile Include="ViewModel\FrmMainViewModel.cs" />
-    <Compile Include="ViewModel\LabelSetViewModel.cs" />
+    <Compile Include="ViewModel\ParaModify\LabelSetViewModel.cs" />
     <Compile Include="ViewModel\LivParaSetViewModel.cs" />
-    <Compile Include="ViewModel\MaterialRegisterViewModel.cs" />
-    <Compile Include="ViewModel\MaterialSetViewModel.cs" />
-    <Compile Include="ViewModel\ReportExportViewModel.cs" />
+    <Compile Include="ViewModel\LoginViewModel.cs" />
+    <Compile Include="ViewModel\ParaModify\MaterialRegisterViewModel.cs" />
+    <Compile Include="ViewModel\ParaModify\MaterialSetViewModel.cs" />
+    <Compile Include="ViewModel\ParaModify\ReportExportViewModel.cs" />
     <Compile Include="ViewModel\SenParaSetViewModel.cs" />
-    <Compile Include="ViewModel\StationSetViewModel.cs" />
-    <Compile Include="ViewModel\TestViewModel.cs" />
-    <Compile Include="ViewModel\ThreeInOneParaViewModel.cs" />
-    <Compile Include="ViewModel\TypeParaViewModel.cs" />
+    <Compile Include="ViewModel\ParaModify\StationSetViewModel.cs" />
+    <Compile Include="ViewModel\ParaModify\TestViewModel.cs" />
+    <Compile Include="ViewModel\ParaModify\ThreeInOneParaViewModel.cs" />
+    <Compile Include="ViewModel\ParaModify\TypeParaViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -148,6 +153,9 @@
     </Compile>
     <Compile Include="View\Children\TypePara.xaml.cs">
       <DependentUpon>TypePara.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\FrmLogin.xaml.cs">
+      <DependentUpon>FrmLogin.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\FrmMain.xaml.cs">
       <DependentUpon>FrmMain.xaml</DependentUpon>
@@ -245,6 +253,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\FrmLogin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\FrmMain.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -302,7 +314,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\Login.png" />
+    <Resource Include="Resources\Logo.ico" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="DeveloperMenu.xml" />
   </ItemGroup>
@@ -315,5 +330,6 @@
   <ItemGroup>
     <Resource Include="Resources\bitbug_favicon.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

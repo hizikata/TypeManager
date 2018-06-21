@@ -330,6 +330,36 @@ namespace XuxzLib
             }
             SqlBulkCopyInsert(tableName, dt);
         }
+        /// <summary>
+        /// 返回SqlDataReader
+        /// </summary>
+        /// <param name="sqlStr"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public DataTable GetDataReader(string sqlStr, SqlParameter[] parameters)
+        {
+            DataTable dt = new DataTable();
+            using(SqlConnection conn =new SqlConnection(connString))
+            {
+                using(SqlCommand cmd=new SqlCommand(sqlStr, conn))
+                {
+                    if (conn.State != ConnectionState.Open)
+                        conn.Open();
+                    if (parameters != null)
+                    {
+                        foreach (var para in parameters)
+                        {
+                            cmd.Parameters.Add(para);
+                        }
+                    }
+                    using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                    {
+                        sda.Fill(dt);
+                    }
+                    return dt;
+                }
+            }
+        }
         #endregion
     }
 }

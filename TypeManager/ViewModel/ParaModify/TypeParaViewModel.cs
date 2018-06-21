@@ -12,6 +12,8 @@ using System.IO;
 using System.Windows;
 using TypeManager.View.Children;
 using System.Windows.Controls;
+using TypeManager.Assist;
+using TypeManager.View;
 
 namespace TypeManager.ViewModel
 {
@@ -25,7 +27,8 @@ namespace TypeManager.ViewModel
         public TypeParaViewModel()
         {
             //InitialTypeParaList(Repository);
-
+            CurrentUser = FrmMain.CurrentUser;
+            CurrentPrivilege = GetPrivilege(CurrentUser);
             InitialProductTypeSource();
         }
         #region Command
@@ -236,6 +239,30 @@ namespace TypeManager.ViewModel
                 comboBox.IsDropDownOpen = true;
             }
         }
+        #endregion
+
+        #region Interface Related
+        /// <summary>
+        /// 获取当前用户权限
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public UserPrivilege GetPrivilege(User user)
+        {
+            if (user.RoleName == "admin")
+                return UserPrivilege.admin;
+            else if (user.GroupName == "开发部")
+                return UserPrivilege.developer;
+            else
+                return UserPrivilege.others;
+        }
+        UserPrivilege _currentPrivilege;
+        public UserPrivilege CurrentPrivilege
+        {
+            get { return _currentPrivilege; }
+            set { _currentPrivilege = value; }
+        }
+        readonly User CurrentUser;
         #endregion
     }
 }

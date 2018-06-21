@@ -17,6 +17,8 @@ using Xceed.Wpf.AvalonDock.Layout;
 using System.Collections.ObjectModel;
 using TypeManager.View.LivAndSen;
 using TypeManager.CommonClass;
+using TypeManager.Model;
+using System.Windows.Threading;
 
 namespace TypeManager.View
 {
@@ -25,10 +27,38 @@ namespace TypeManager.View
     /// </summary>
     public partial class FrmMain : Window
     {
+        #region Fields
+        DispatcherTimer Timer = new DispatcherTimer();
+        public static User CurrentUser;
+        //IPC连接
+        string Path = @"\\192.168.0.237\TestParameter";
+        string Pwd = "eic2018";
+        string UserName = @"ms003\Admin";
+
+        #endregion
         public FrmMain()
         {
             InitializeComponent();
+            IPCInitialize();
             RegisterMethods();
+            //定时器
+            Timer.Tick += Timer_Tick;
+            Timer.Interval = new TimeSpan(0, 0, 1);
+            Timer.Start();
+
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            this.lbTime.Content = string.Format(@"当前时间:{0}", DateTime.Now.ToString());
+        }
+
+        public FrmMain(User user) : this()
+        {
+            FrmMain.CurrentUser = user;
+            this.lbUserName.Content = string.Format(@"当前用户:{0}", CurrentUser.UserName);
+            this.lbGroupName.Content = string.Format(@"所属用户组:{0}", CurrentUser.GroupName);
+            this.lbRoleName.Content = string.Format(@"权限级别:{0}", CurrentUser.RoleName);
         }
         public void RegisterMethods()
         {
@@ -55,7 +85,7 @@ namespace TypeManager.View
             {
                 ObservableCollection<LayoutContent> documents = DocumentPane.Children;
                 if (documents.Count > 0)
-                {           
+                {
                     foreach (var item in documents)
                     {
                         if (item.Title == title)
@@ -78,17 +108,39 @@ namespace TypeManager.View
                     DocumentPane.Children.Add(document);
                     document.IsSelected = true;
                 }
-                
+
             }
             else
             {
-                MessageBox.Show("不存在DocumentPane","系统提示");
+                MessageBox.Show("不存在DocumentPane", "系统提示");
             }
         }
 
         private void Window_Closed(object sender, EventArgs e)
-        {
+        {            
             IPCConnection.ConnectState("net use * /del /y");
+            Timer.Stop();
+        }
+        /// <summary>
+        /// 初始IPC连接
+        /// </summary>
+        void IPCInitialize()
+        {
+            string connectStr = "net use " + Path + " " + Pwd + " /user:" + UserName;
+            bool state = IPCConnection.ConnectState(connectStr);
+            if (state == false)
+            {
+                MessageBox.Show("连接远程文件夹失败，Liv&Sen参数将无法修改！", "系统提示");
+            }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("是否退出？", "系统提示", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Cancel)
+            {
+                e.Cancel = true;
+            }
         }
     }
 }

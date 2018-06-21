@@ -8,8 +8,8 @@
         xmlns:ad="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:vm="clr-namespace:TypeManager.ViewModel" WindowState="Maximized"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"  MinWidth="600"  
-        Closed="Window_Closed"
-        Title="型号管理" Height="502.983" Width="647.397">
+        Closed="Window_Closed" Closing="Window_Closing"
+        Title="型号管理" Height="453.956" Width="647.397">
     <!--<Window.Resources>
         <XmlDataProvider x:Key="xmlMenu"
                          Source="pack://application:,,,/TypeManager;component/DeveloperMenu.xml"
@@ -67,6 +67,10 @@
                                         <TreeViewItem Header="LIV参数修改" Tag="LivParaSet"/>
                                         <TreeViewItem Header="SEN参数更改" Tag="SenParaSet"/>
                                     </TreeViewItem>
+                                    <TreeViewItem Header="流程卡/测报文件">
+                                        <TreeViewItem Header="流程卡管理"/>
+                                        <TreeViewItem Header="测报文件管理"/>
+                                    </TreeViewItem>
                                 </TreeView>
                             </DockPanel>
                         </ad:LayoutAnchorable>
@@ -76,5 +80,18 @@
                 </ad:LayoutPanel>
             </ad:LayoutRoot>
         </ad:DockingManager>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200*"/>
+                <ColumnDefinition Width="200*"/>
+                <ColumnDefinition Width="200*"/>
+                <ColumnDefinition Width="200*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" x:Name="lbUserName" Content="当前用户:"/>
+            <Label Grid.Column="1" x:Name="lbGroupName" Content="所属用户组:"/>
+            <Label Grid.Column="2" x:Name="lbRoleName" Content="权限级别:"/>
+            <Label Grid.Column="3" x:Name="lbTime" Content="当前时间:" HorizontalAlignment="Right"/>
+        </Grid>
     </Grid>
+
 </Window>

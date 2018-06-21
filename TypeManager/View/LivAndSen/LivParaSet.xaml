@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TypeManager.View.LivAndSen"
              xmlns:dal="clr-namespace:TypeManager.DAL"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:vm="clr-namespace:TypeManager.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -21,17 +22,31 @@
         <StackPanel DockPanel.Dock="Top" Margin="5">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="参数文档:"/>
-                <ComboBox Margin="5,0" Width="300" Name="cmbFileNames" ItemsSource="{Binding FileNames}"/>
-                <Button x:Name="btnQuery" Content="查询" Command="{Binding QueryCommand}"
+                <ComboBox Margin="5,0" Width="400" Name="cmbFileNames" ItemsSource="{Binding FileNames}"
+                          IsEditable="True">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="KeyUp">
+                            <i:InvokeCommandAction Command="{Binding CmbDropDown}" CommandParameter="{Binding ElementName=cmbFileNames}"/>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="GotFocus">
+                            <i:InvokeCommandAction Command="{Binding GotFocusCommand}" CommandParameter="{Binding ElementName=cmbFileNames}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
+                <Button x:Name="btnQuery" Content="加载" Command="{Binding QueryCommand}"
                         CommandParameter="{Binding ElementName=cmbFileNames,Path=SelectedItem}"/>
             </StackPanel>
 
         </StackPanel>
         <StackPanel DockPanel.Dock="Top" Margin="5" Orientation="Horizontal">
-            <TextBlock Text="产品型号:"/>
-            <TextBlock MinWidth="100"/>
-            <TextBlock Text="高低温:"/>
-            <TextBlock MinWidth="100"/>
+            <TextBlock Text="产品型号:" FontSize="18" FontWeight="Bold"/>
+            <TextBlock x:Name="tbProductType" MinWidth="100" Text="{Binding FileName}" FontSize="18" FontWeight="Bold"/>
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Top" Margin="0,10,0,5" Orientation="Horizontal">
+            <TextBlock Text="参数名称"/>
+            <TextBox Name="tbParaName"/>
+            <Button Name="btnParaSearch"  Content="查找" 
+                    Command="{Binding ParaSearchCommand}" CommandParameter="{Binding ElementName=tbParaName, Path=Text}"/>
         </StackPanel>
         <StackPanel Margin="5,10" DockPanel.Dock="Bottom" 
                     Visibility="{Binding ElementName=lviewInfo ,Path=SelectedItem, Converter={StaticResource StackVisibility}}">
@@ -42,13 +57,20 @@
                 <TextBox Name="btnParaValue" Text="{Binding ParaValue}"/>
             </StackPanel>
             <Button Content="参数更新" HorizontalAlignment="Left" Margin="180,5"
-                    Command="{Binding UpdateCommand}" CommandParameter="{Binding ElementName=lviewInfo,Path=SelectedItem}"/>
+                    Command="{Binding UpdateCommand}" CommandParameter="{Binding ElementName=lviewInfo,Path=SelectedItem}">
+                <Button.Visibility>
+                    <MultiBinding Converter="{StaticResource btnConverter}">
+                        <Binding ElementName="tbProductType" Path="Text"/>
+                        <Binding Path="CurrentPrivilege"/>
+                    </MultiBinding>
+                </Button.Visibility>
+            </Button>
         </StackPanel>
         <ListView x:Name="lviewInfo" ItemsSource="{Binding DisplayInfo}" DockPanel.Dock="Bottom">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="150" Header="参数名称" DisplayMemberBinding="{Binding ParaName}"/>
-                    <GridViewColumn Width="100" Header="参数值"  DisplayMemberBinding="{Binding ParaValue}"/>
+                    <GridViewColumn Width="250" Header="参数值"  DisplayMemberBinding="{Binding ParaValue}"/>
                 </GridView>
             </ListView.View>
         </ListView>

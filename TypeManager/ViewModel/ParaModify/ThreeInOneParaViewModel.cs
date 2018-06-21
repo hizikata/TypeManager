@@ -10,16 +10,18 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using TypeManager.View.Children;
 using System.Windows.Controls;
+using TypeManager.Assist;
+using TypeManager.View;
 
 namespace TypeManager.ViewModel
 {
-    public class LabelSetViewModel:ViewModelBase
+    public class ThreeInOneParaViewModel:ViewModelBase
     {
         #region Fields
         int count = 0;
         List<string> ListDefault;
-        LabelSetService LabelSetSer = new LabelSetService();
-        string TableName = "Redo_TemplateRedoSN";
+        ThreeInOneService ThreeInOneSer = new ThreeInOneService();
+        string TableName = "Config_CommonParaSet";
         #endregion
         #region Properties
         private List<string> _typeList;
@@ -27,11 +29,11 @@ namespace TypeManager.ViewModel
         public List<string> TypeList
         {
             get { return _typeList; }
-            set { _typeList = value; RaisePropertyChanged(() => TypeList); }
+            set { _typeList = value;RaisePropertyChanged(() => TypeList); }
         }
-        private ObservableCollection<TemplateRedoSN> _displayIfo;
+        private ObservableCollection<CommonParaSet> _displayIfo;
 
-        public ObservableCollection<TemplateRedoSN> DisplayInfo
+        public ObservableCollection<CommonParaSet> DisplayInfo
         {
             get { return _displayIfo; }
             set { _displayIfo = value; RaisePropertyChanged(() => DisplayInfo); }
@@ -52,17 +54,20 @@ namespace TypeManager.ViewModel
         {
             if (!string.IsNullOrEmpty(str))
             {
-                List<TemplateRedoSN> list = LabelSetSer.Search(str, TableName);
+                List<CommonParaSet> list = ThreeInOneSer.Search(str, TableName);
                 if (list.Count == 0)
                 {
-                    MessageBox.Show("查询结果为空", "系统提示");
+                    
+                    MessageBox.Show("查询无结果", "系统提示");
                     DisplayInfo = null;
                 }
                 else
                 {
-                    DisplayInfo = new ObservableCollection<TemplateRedoSN>(list);
+                    DisplayInfo = new ObservableCollection<CommonParaSet>(list);
                 }
             }
+            else
+                MessageBox.Show("请选择产品型号", "错误提示");
         }
         public RelayCommand<object> UpdateDB
         {
@@ -75,9 +80,9 @@ namespace TypeManager.ViewModel
         {
             if (obj != null)
             {
-                if (obj is TemplateRedoSN model)
+                if (obj is CommonParaSet model)
                 {
-                    int count = LabelSetSer.UpdateDB(model, TableName);
+                    int count = ThreeInOneSer.UpdateDB(model, TableName);
                     if (count == 1)
                         System.Windows.MessageBox.Show("更新数据库成功", "更新提示", System.Windows.MessageBoxButton.OK);
                     else
@@ -92,8 +97,10 @@ namespace TypeManager.ViewModel
         }
         #endregion
         #region Constructor
-        public LabelSetViewModel()
+        public ThreeInOneParaViewModel()
         {
+            CurrentUser = FrmMain.CurrentUser;
+            CurrentPrivilege = GetPrivilege(CurrentUser);
             ListDefault = CommonMethods.ReadFromFile();
             TypeList = ListDefault;
         }
@@ -130,9 +137,8 @@ namespace TypeManager.ViewModel
                 MessageBox.Show("请先在“型号参数”选项卡添加对应型号！", "系统提示");
                 return;
             }
-
             bool IsTypeExist = false;
-            List<string> list = LabelSetSer.GetTypeList(TableName);
+            List<string> list = ThreeInOneSer.GetTypeList(TableName);
             foreach (string item in list)
             {
                 if (item == str.Trim())
@@ -150,7 +156,7 @@ namespace TypeManager.ViewModel
                 MessageBoxResult result = MessageBox.Show("当前列表数据为空，新型号所有数据需要手动输入，是否确认", "系统提示", MessageBoxButton.OKCancel);
                 if (result == MessageBoxResult.OK)
                 {
-                    LabelSet window = new LabelSet();
+                    ThreeInOne window = new ThreeInOne();
                     window.tbNewType.Text = str.Trim();
                     window.ShowDialog();
                 }
@@ -166,7 +172,7 @@ namespace TypeManager.ViewModel
                 {
                     item.ProductType = str;
                 }
-                LabelSet window = new LabelSet();
+                ThreeInOne window = new ThreeInOne();
                 window.tbNewType.Text = str.Trim();
                 window.lViewInfo.ItemsSource = DisplayInfo;
                 window.ShowDialog();
@@ -182,10 +188,11 @@ namespace TypeManager.ViewModel
         }
         public void ExecuteInsertDB()
         {
-            CommonMethods.SqlBulkCopyInsert<TemplateRedoSN>(DisplayInfo.ToList<TemplateRedoSN>(), TableName);
+            CommonMethods.SqlBulkCopyInsert<CommonParaSet>(DisplayInfo.ToList<CommonParaSet>(), TableName);
             MessageBox.Show("数据插入成功", "系统提示");
         }
         #endregion
+
         #region ComboBox Command
         public RelayCommand<object> CmbDropDown
         {
@@ -217,6 +224,30 @@ namespace TypeManager.ViewModel
                 comboBox.IsDropDownOpen = true;
             }
         }
+        #endregion
+
+        #region Interface Related
+        /// <summary>
+        /// 获取当前用户权限
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public UserPrivilege GetPrivilege(User user)
+        {
+            if (user.RoleName == "admin")
+                return UserPrivilege.admin;
+            else if (user.GroupName == "开发部")
+                return UserPrivilege.developer;
+            else
+                return UserPrivilege.others;
+        }
+        UserPrivilege _currentPrivilege;
+        public UserPrivilege CurrentPrivilege
+        {
+            get { return _currentPrivilege; }
+            set { _currentPrivilege = value; }
+        }
+        readonly User CurrentUser;
         #endregion
     }
 }

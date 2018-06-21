@@ -33,9 +33,11 @@
                 </i:Interaction.Triggers>
             </ComboBox>
             <Button Name="btnSearch" Content="搜索" Command="{Binding Search}" CommandParameter="{Binding ElementName=cmbType,Path=Text}" Margin="10,0,0,0"/>
-            <TextBlock Text="新型号名称:" Margin="10,0,0,0" Padding="0,3"/>
-            <TextBox x:Name="tbNewType"  MinWidth="100"/>
-            <Button Name="btnNewType" Content="添加型号" Command="{Binding ShowInsertDBWindow}" CommandParameter="{Binding ElementName=tbNewType,Path=Text}"/>
+            <StackPanel Orientation="Horizontal" Visibility="{Binding CurrentPrivilege, Converter={StaticResource priConverter}}">
+                <TextBlock Text="新型号名称:" Margin="10,0,0,0" Padding="0,3"/>
+                <TextBox x:Name="tbNewType"  MinWidth="100"/>
+                <Button Name="btnNewType" Content="添加型号" Command="{Binding ShowInsertDBWindow}" CommandParameter="{Binding ElementName=tbNewType,Path=Text}"/>
+            </StackPanel>
         </StackPanel>
         <GroupBox Header="参数信息" DockPanel.Dock="Bottom" Margin="10"
                   Visibility="{Binding ElementName=lViewInfo,Path=SelectedItem,Converter={StaticResource StackVisibility}}">
@@ -64,7 +66,7 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
                             <TextBlock Text="产品型号:"/>
-                            <TextBox Text="{Binding ProductType}"/>
+                            <TextBox Name="tbProductType" Text="{Binding ProductType}"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0">
                             <TextBlock Text="站       别:"/>
@@ -101,6 +103,12 @@
                     </Grid>
                 </StackPanel>
                 <StackPanel DataContext="{Binding Source={StaticResource ThreeInOneParaVM}}">
+                    <StackPanel.Visibility>
+                        <MultiBinding Converter="{StaticResource btnConverter}">
+                            <Binding ElementName="tbProductType" Path="Text"/>
+                            <Binding Path="CurrentPrivilege"/>
+                        </MultiBinding>
+                    </StackPanel.Visibility>
                     <Button Padding="3" Margin="5" Name="btnInsertDB" Command="{Binding UpdateDB}"
                             CommandParameter="{Binding ElementName=lViewInfo, Path=SelectedItem}"
                             Content="参数更新" HorizontalAlignment="Center"/>

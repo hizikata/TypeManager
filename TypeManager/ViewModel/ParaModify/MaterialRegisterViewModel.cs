@@ -8,6 +8,8 @@ using TypeManager.DAL;
 using TypeManager.Model;
 using System.Collections.ObjectModel;
 using System.Windows;
+using TypeManager.Assist;
+using TypeManager.View;
 
 namespace TypeManager.ViewModel
 {
@@ -123,6 +125,8 @@ namespace TypeManager.ViewModel
         #region Constructor
         public MaterialRegisterViewModel()
         {
+            CurrentUser = FrmMain.CurrentUser;
+            CurrentPrivilege = GetPrivilege(CurrentUser);
             TypeList = new List<string>()
             {
                 "0度滤片",
@@ -133,6 +137,29 @@ namespace TypeManager.ViewModel
                 "PD"
             };
         }
+        #endregion
+        #region Interface Related
+        /// <summary>
+        /// 获取当前用户权限
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public UserPrivilege GetPrivilege(User user)
+        {
+            if (user.RoleName == "admin")
+                return UserPrivilege.admin;
+            else if (user.GroupName == "开发部")
+                return UserPrivilege.developer;
+            else
+                return UserPrivilege.others;
+        }
+        UserPrivilege _currentPrivilege;
+        public UserPrivilege CurrentPrivilege
+        {
+            get { return _currentPrivilege; }
+            set { _currentPrivilege = value; }
+        }
+        readonly User CurrentUser;
         #endregion
     }
 }

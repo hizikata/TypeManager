@@ -7,8 +7,7 @@
              xmlns:vm="clr-namespace:TypeManager.ViewModel"
              xmlns:dal="clr-namespace:TypeManager.DAL"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-             mc:Ignorable="d" Background="LightSkyBlue"
-             d:DesignHeight="300" d:DesignWidth="300">
+             mc:Ignorable="d" Background="LightSkyBlue" >
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -17,7 +16,7 @@
             <vm:StationSetViewModel x:Key="StationSetVM"/>
             <dal:IsSelectedItemToVisibility x:Key="StackVisibility"/>
         </ResourceDictionary>
-        
+
     </UserControl.Resources>
     <DockPanel DataContext="{Binding Source={StaticResource StationSetVM}}">
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
@@ -33,11 +32,14 @@
                 </i:Interaction.Triggers>
             </ComboBox>
             <Button Name="btnSearch" Command="{Binding Search}" CommandParameter="{Binding ElementName=cmbTypeList,Path=Text}" Content="搜索" Margin="10,0,0,0"/>
-            <TextBlock Text="新型号名称:" Margin="20,0,0,0"/>
-            <TextBox Name="tbNewType" MinWidth="100" MaxWidth="200"/>
-            <Button Name="btnUpdateDB"  Content="添加新型号" Command="{Binding ShowInsertDBWindow}" CommandParameter="{Binding ElementName=tbNewType,Path=Text}" Margin="10,0,0,0"/>
+            <StackPanel Orientation="Horizontal" Visibility="{Binding CurrentPrivilege, Converter={StaticResource priConverter}}">
+                
+                <TextBlock Text="新型号名称:" Margin="20,0,0,0"/>
+                <TextBox Name="tbNewType" MinWidth="100" MaxWidth="200"/>
+                <Button Name="btnUpdateDB"  Content="添加新型号" Command="{Binding ShowInsertDBWindow}" CommandParameter="{Binding ElementName=tbNewType,Path=Text}" Margin="10,0,0,0"/>
+            </StackPanel>
         </StackPanel>
-       
+
         <GroupBox DockPanel.Dock="Bottom" Margin="10"  Header="参数信息"
                    Visibility="{Binding ElementName=lviewInfo,Path=SelectedItem,Converter={StaticResource StackVisibility}}">
             <StackPanel Margin="5">
@@ -45,7 +47,7 @@
                     >
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                         <TextBlock Text="产品型号:"/>
-                        <TextBox Text="{Binding ProductType}"/>
+                        <TextBox Name="tbProductType" Text="{Binding ProductType}" IsHitTestVisible="False"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                         <TextBlock Text="站 别 I D:"/>
@@ -65,14 +67,20 @@
                     </StackPanel>
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Bottom" Margin="0,5,0,0">
+                    <StackPanel.Visibility>
+                        <MultiBinding Converter="{StaticResource btnConverter}">
+                            <Binding ElementName="tbProductType" Path="Text"/>
+                            <Binding Path="CurrentPrivilege"/>
+                        </MultiBinding>
+                    </StackPanel.Visibility>
                     <Button Content="参数更新" Command="{Binding UpdateDB}" CommandParameter="{Binding ElementName=lviewInfo,Path=SelectedItem}" 
                             HorizontalAlignment="Left"/>
                 </StackPanel>
             </StackPanel>
-            
+
         </GroupBox>
 
-        
+
         <StatusBar DockPanel.Dock="Bottom">
             <TextBlock Text="{Binding ElementName=lviewInfo, Path=SelectedIndex ,StringFormat=当前行号:\{0\}}"/>
             <TextBlock Text="{Binding ElementName=lviewInfo,Path=Items.Count,StringFormat=总行数:\{0\}}"/>

@@ -8,19 +8,19 @@ using TypeManager.DAL;
 using TypeManager.Model;
 using System.Collections.ObjectModel;
 using System.Windows;
-using TypeManager.View.Children;
 using System.Windows.Controls;
+using TypeManager.Assist;
+using TypeManager.View;
 
 namespace TypeManager.ViewModel
 {
-    public class CommonParaViewModel:ViewModelBase
+    public class MaterialSetViewModel:ViewModelBase
     {
-
         #region Fields
         int count = 0;
         List<string> ListDefault;
-        CommonParaService CommonParaSer = new CommonParaService();
-        string TableName = "Para_ProductParameter";
+        MaterialSetService MaterialSetSer = new MaterialSetService();
+        string TableName = "Ma_ProductMatchSpecify";
         #endregion
         #region Properties
         private List<string> _typeList;
@@ -30,9 +30,9 @@ namespace TypeManager.ViewModel
             get { return _typeList; }
             set { _typeList = value;RaisePropertyChanged(() => TypeList); }
         }
-        private ObservableCollection<ProductParameter> _displayIfo;
+        private ObservableCollection<ProductMatchSpecify> _displayIfo;
 
-        public ObservableCollection<ProductParameter> DisplayInfo
+        public ObservableCollection<ProductMatchSpecify> DisplayInfo
         {
             get { return _displayIfo; }
             set { _displayIfo = value; RaisePropertyChanged(() => DisplayInfo); }
@@ -53,10 +53,17 @@ namespace TypeManager.ViewModel
         {
             if (!string.IsNullOrEmpty(str))
             {
-                DisplayInfo=new ObservableCollection<ProductParameter>(CommonParaSer.Search(str, TableName));
+                List<ProductMatchSpecify> list = MaterialSetSer.Search(str, TableName);
+                if (list.Count == 0)
+                {
+                    MessageBox.Show("查询结果为空", "错误提示");
+                    DisplayInfo = null;
+                }
+                else
+                {
+                    DisplayInfo = new ObservableCollection<ProductMatchSpecify>(list);
+                }
             }
-            else
-                MessageBox.Show("请选择产品型号","错误提示");
         }
         public RelayCommand<object> UpdateDB
         {
@@ -69,9 +76,9 @@ namespace TypeManager.ViewModel
         {
             if (obj != null)
             {
-                if (obj is ProductParameter model)
+                if (obj is ProductMatchSpecify model)
                 {
-                    int count = CommonParaSer.UpdateDB(model, TableName);
+                    int count = MaterialSetSer.UpdateDB(model, TableName);
                     if (count == 1)
                         System.Windows.MessageBox.Show("更新数据库成功", "更新提示", System.Windows.MessageBoxButton.OK);
                     else
@@ -86,12 +93,15 @@ namespace TypeManager.ViewModel
         }
         #endregion
         #region Constructor
-        public CommonParaViewModel()
+        public MaterialSetViewModel()
         {
-            ListDefault= CommonMethods.ReadFromFile();
+            CurrentUser = FrmMain.CurrentUser;
+            CurrentPrivilege = GetPrivilege(CurrentUser);
+            ListDefault = CommonMethods.ReadFromFile();
             TypeList = ListDefault;
         }
         #endregion
+
         #region InsertDB Area
         public RelayCommand<string> ShowInsertDBWindow
         {
@@ -106,45 +116,17 @@ namespace TypeManager.ViewModel
         /// <param name="str"></param>
         public void ExecuteShowInsertDBWindow(string str)
         {
-            
-            
             if (string.IsNullOrEmpty(str.Trim()))
             {
                 MessageBox.Show("请输入新型号名称", "错误提示");
                 return;
-            }
-            bool flag = false;
-            foreach (string item in ListDefault)
-            {
-                if (item == str.Trim())
-                    flag = true;
-            }
-            if (flag == false)
-            {
-                MessageBox.Show("请先在“型号参数”选项卡添加对应型号！", "系统提示");
-                return;
-            }
-            bool IsTypeExist = false;
-            List<string> list = CommonParaSer.GetTypeList(TableName);
-            foreach (string item in list)
-            {
-                if (item == str.Trim())
-                    IsTypeExist = true;
-            }
-            if (IsTypeExist == true)
-            {
-                MessageBoxResult result = MessageBox.Show("数据库已存在该型号数据，是否重复写入？", "系统提示",MessageBoxButton.OKCancel);
-                if (result == MessageBoxResult.Cancel)
-                    return;
             }
             if (DisplayInfo == null)
             {
                 MessageBoxResult result = MessageBox.Show("当前列表数据为空，新型号所有数据需要手动输入，是否确认", "系统提示", MessageBoxButton.OKCancel);
                 if (result == MessageBoxResult.OK)
                 {
-                    CommonPara window = new CommonPara();
-                    window.tbNewType.Text = str;
-                    window.ShowDialog();
+
                 }
                 else
                 {
@@ -154,30 +136,76 @@ namespace TypeManager.ViewModel
             }
             else
             {
-                foreach (ProductParameter item in DisplayInfo)
+                foreach (var item in DisplayInfo)
                 {
                     item.ProductType = str;
                 }
-                CommonPara window = new CommonPara();
-                window.tbNewType.Text = str;
-                window.lViewInfo.ItemsSource = DisplayInfo;
-                window.ShowDialog();
             }
 
         }
         /// <summary>
         /// 插入数据库命令执行的方法
         /// </summary>
-        public RelayCommand InsertDB
+        public RelayCommand<object> InsertDB
         {
-            get { return new RelayCommand(() => ExecuteInsertDB()); }
+            get { return new RelayCommand<object>((obj) => ExecuteInsertDB(obj)); }
         }
-        public void ExecuteInsertDB()
+        public void ExecuteInsertDB(object obj)
         {
-            CommonMethods.SqlBulkCopyInsert<ProductParameter>(DisplayInfo.ToList<ProductParameter>(), TableName);
-            MessageBox.Show("数据插入成功", "系统提示");
+            
+            if (obj != null)
+            {
+
+                if (obj is ProductMatchSpecify model)
+                {
+                    if (string.IsNullOrEmpty(model["ProductType"].Trim()))
+                    {
+                        MessageBox.Show("请输入新型号名称", "错误提示");
+                        return;
+                    }
+                    bool flag = false;
+                    foreach (string item in ListDefault)
+                    {
+                        if (item == model["ProductType"].Trim())
+                            flag = true;
+                    }
+                    if (flag == false)
+                    {
+                        MessageBox.Show("请先在“型号参数”选项卡添加对应型号！", "系统提示");
+                        return;
+                    }
+                    bool IsTypeExist = false;
+                    List<string> list = MaterialSetSer.GetTypeList(TableName);
+                    foreach (string item in list)
+                    {
+                        if (item == model["ProductType"].Trim())
+                            IsTypeExist = true;
+                    }
+                    if (IsTypeExist == true)
+                    {
+                        MessageBoxResult result = MessageBox.Show("数据库已存在该型号数据，是否重复写入？", "系统提示",MessageBoxButton.OKCancel);
+                        if (result == MessageBoxResult.Cancel)
+                            return;
+                    }
+                    int count = MaterialSetSer.InsertDB(model, TableName);
+                    if (count == 1)
+                        MessageBox.Show("数据插入成功", "系统提示");
+                    else
+                        MessageBox.Show("数据插入失败，插入数量" + count, "系统提示");
+                }
+                else
+                {
+                    MessageBox.Show("SelectedItem 转换失败，请联系系统管理员", "系统提示");
+                }
+            }
+            else
+            {
+                MessageBox.Show("请选择一项", "系统提示");
+            }
+            
         }
         #endregion
+
         #region ComboBox Command
         public RelayCommand<object> CmbDropDown
         {
@@ -209,6 +237,29 @@ namespace TypeManager.ViewModel
                 comboBox.IsDropDownOpen = true;
             }
         }
+        #endregion
+        #region Interface Related
+        /// <summary>
+        /// 获取当前用户权限
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public UserPrivilege GetPrivilege(User user)
+        {
+            if (user.RoleName == "admin")
+                return UserPrivilege.admin;
+            else if (user.GroupName == "开发部")
+                return UserPrivilege.developer;
+            else
+                return UserPrivilege.others;
+        }
+        UserPrivilege _currentPrivilege;
+        public UserPrivilege CurrentPrivilege
+        {
+            get { return _currentPrivilege; }
+            set { _currentPrivilege = value; }
+        }
+        readonly User CurrentUser;
         #endregion
     }
 }

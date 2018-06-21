@@ -9,19 +9,32 @@ using TypeManager.Model;
 using TypeManager.CommonClass;
 using System.Windows;
 using System.IO;
+using TypeManager.Assist;
+using TypeManager.View;
+using System.Windows.Controls;
+using TypeManager.DAL;
 
 namespace TypeManager.ViewModel
 {
     public class LivParaSetViewModel : ViewModelBase
     {
         #region Fields
-        readonly string Path = @"\\192.168.0.237\TestParameter\RDTest";
-        readonly string Pwd = "eic2018";
-        readonly string UserName = @"ms003\Admin";
-        string FileName;
+        int count = 0;
+        string CurrentFileName;
+        List<string> ListDefault;
+        readonly string LivPath = @"\\192.168.0.237\TestParameter\LIV_database\setup";
+
         #endregion
         #region Properties
-        public string[] FileNames { get; set; }
+        List<string> _fileNames;
+        /// <summary>
+        /// Liv文件参数文件集
+        /// </summary>
+        public List<string> FileNames
+        {
+            get { return _fileNames; }
+            set { _fileNames = value; RaisePropertyChanged(() => FileNames); }
+        }
         public List<LivParaModel> ListDisplayInfo { get; set; }
         public Dictionary<string, string> DictProductType { get; set; }
         private ObservableCollection<LivParaModel> _displayInfo;
@@ -32,13 +45,21 @@ namespace TypeManager.ViewModel
             set { _displayInfo = value; RaisePropertyChanged(() => DisplayInfo); }
         }
         public Dictionary<string, string> DictParaInfo { get; set; }
-
+        string _fileName;
+        public string FileName
+        {
+            get { return _fileName; }
+            set { _fileName = value; RaisePropertyChanged(() => FileName); }
+        }
 
         #endregion
 
         #region Constructors
         public LivParaSetViewModel()
         {
+            CurrentUser = FrmMain.CurrentUser;
+            CurrentPrivilege = GetPrivilege(CurrentUser);
+            FileNames = new List<string>();
             Initialize();
         }
         #endregion
@@ -47,21 +68,24 @@ namespace TypeManager.ViewModel
         {
             try
             {
-                bool connState = false;
-                //连接远程文件夹
-                string connectStr = "net use " + Path + " " + Pwd + " /user:" + UserName;
-                connState = IPCConnection.ConnectState(connectStr);
-                if (connState)
+                if (Directory.Exists(LivPath))
                 {
                     //共享文件夹的目录
-                    DirectoryInfo theFolder = new DirectoryInfo(Path);
-                    string filename = theFolder.ToString();
                     //获取目录下的全部文件名
-                    FileNames = Directory.GetFiles(Path);
+                    ListDefault = new List<string>();
+                    string[] fileNames = Directory.GetFiles(LivPath);
+                    foreach (var item in fileNames)
+                    {
+                        if (item.EndsWith(".scg"))
+                        {
+                            ListDefault.Add(item);
+                        }
+                    }
+                    FileNames = ListDefault;
                 }
                 else
                 {
-                    MessageBox.Show("连接远程文件夹失败！", "系统提示");
+                    MessageBox.Show("连接Liv远程文件夹失败！", "系统提示");
                 }
 
             }
@@ -86,6 +110,13 @@ namespace TypeManager.ViewModel
                 return new RelayCommand<object>(obj => ExecuteUpdateCommand(obj));
             }
         }
+        public RelayCommand<object> ParaSearchCommand
+        {
+            get
+            {
+                return new RelayCommand<object>(obj => ExecuteParaSearchCommand(obj));
+            }
+        }
         #endregion
         #region CommandMethods
         private void ExecuteQueryCommand(object obj)
@@ -94,8 +125,10 @@ namespace TypeManager.ViewModel
             {
                 DictParaInfo = new Dictionary<string, string>();
                 ListDisplayInfo = new List<LivParaModel>();
-                FileName = obj.ToString();
-                FileInfo fileInfo = new FileInfo(FileName);
+                CurrentFileName = obj.ToString();
+                int location = CurrentFileName.LastIndexOf('\\');
+                FileName = CurrentFileName.Substring(location + 1);
+                FileInfo fileInfo = new FileInfo(CurrentFileName);
                 using (StreamReader sr = fileInfo.OpenText())
                 {
                     string[] strArray = null;
@@ -104,12 +137,17 @@ namespace TypeManager.ViewModel
                     {
                         if (!string.IsNullOrEmpty(output.Trim()))
                         {
-                            strArray = output.Split('=');
-                            DictParaInfo.Add(strArray[0], strArray[1]);
-                            if (strArray[0].StartsWith("Judge"))
+                            if (output.Contains("="))
                             {
+                                strArray = output.Split('=');
+                                DictParaInfo.Add(strArray[0].Trim(), strArray[1].Trim());
+                                //显示所有参数 180612
+                                //if (strArray[0].StartsWith("Judge"))
+                                //{
                                 ListDisplayInfo.Add(new LivParaModel(strArray[0], strArray[1]));
+                                //}
                             }
+
                         }
                     }
                 }
@@ -128,13 +166,13 @@ namespace TypeManager.ViewModel
         {
             if (obj is LivParaModel livPara)
             {
-                DictParaInfo[livPara.ParaName] = livPara.ParaValue;
+                DictParaInfo[livPara.ParaName.Trim()] = livPara.ParaValue.Trim() ;
 
-                using (StreamWriter sw = File.CreateText(FileName))
+                using (StreamWriter sw = File.CreateText(CurrentFileName))
                 {
                     foreach (var item in DictParaInfo)
                     {
-                        sw.WriteLine(item.Key + " = "+item.Value);
+                        sw.WriteLine(item.Key + " = " + item.Value);
                     }
                 }
                 MessageBox.Show("文件数据更新成功", "系统提示");
@@ -144,6 +182,83 @@ namespace TypeManager.ViewModel
             else
             {
                 MessageBox.Show("输入的参数值格式不正确", "系统提示");
+            }
+        }
+        private void ExecuteParaSearchCommand(object obj)
+        {
+            string searchStr = obj.ToString().Trim();
+            if (string.IsNullOrEmpty(searchStr))
+            {
+                DisplayInfo = new ObservableCollection<LivParaModel>(ListDisplayInfo);
+            }
+            else
+            {
+                List<LivParaModel> listNew = new List<LivParaModel>();
+                foreach (var item in ListDisplayInfo)
+                {
+                    if (item.ParaName.Contains(searchStr))
+                    {
+                        listNew.Add(item);
+                    }
+                }
+                DisplayInfo = new ObservableCollection<LivParaModel>(listNew);
+            }
+            
+        }
+        #endregion
+        #region Interface Related
+        /// <summary>
+        /// 获取当前用户权限
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public UserPrivilege GetPrivilege(User user)
+        {
+            if (user.RoleName == "admin")
+                return UserPrivilege.admin;
+            else if (user.GroupName == "开发部")
+                return UserPrivilege.developer;
+            else
+                return UserPrivilege.others;
+        }
+        UserPrivilege _currentPrivilege;
+        public UserPrivilege CurrentPrivilege
+        {
+            get { return _currentPrivilege; }
+            set { _currentPrivilege = value; }
+        }
+        readonly User CurrentUser;
+        #endregion
+
+        #region ComboBox Command
+        public RelayCommand<object> CmbDropDown
+        {
+            get { return new RelayCommand<object>((obj) => ExecuteCmbDropDown(obj)); }
+        }
+        public void ExecuteCmbDropDown(object obj)
+        {
+            if (obj is ComboBox comboBox)
+            {
+                int countNew = comboBox.Text.Length;
+                if (countNew != count)
+                {
+                    FileNames = CommonMethods.ListFilter(ListDefault, comboBox.Text.Trim());
+                    comboBox.IsDropDownOpen = true;
+                    count = countNew;
+                }
+                else
+                    return;
+            }
+        }
+        public RelayCommand<object> GotFocusCommand
+        {
+            get { return new RelayCommand<object>((obj) => ExecuteGotFocusCommand(obj)); }
+        }
+        public void ExecuteGotFocusCommand(object obj)
+        {
+            if (obj is ComboBox comboBox)
+            {
+                comboBox.IsDropDownOpen = true;
             }
         }
         #endregion

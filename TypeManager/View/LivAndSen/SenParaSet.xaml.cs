@@ -19,6 +19,7 @@ namespace TypeManager.View.LivAndSen
     /// </summary>
     public partial class SenParaSet : UserControl
     {
+        public string[] StrBoolean =new string[2] { "False", "True" };
         public SenParaSet()
         {
             InitializeComponent();
@@ -27,7 +28,7 @@ namespace TypeManager.View.LivAndSen
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-
+            this.cmbBoolean.ItemsSource = StrBoolean;
         }
     }
 }

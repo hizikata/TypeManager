@@ -4,42 +4,39 @@ using System.Linq;
 using System.Text;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using TypeManager.Model;
-using System.Collections.ObjectModel;
 using TypeManager.DAL;
+using TypeManager.Model;
 using System.Windows;
-using System.IO;
+using System.Collections.ObjectModel;
 using TypeManager.View.Children;
 using System.Windows.Controls;
+using TypeManager.Assist;
+using TypeManager.View;
 
 namespace TypeManager.ViewModel
 {
-    public class StationSetViewModel : ViewModelBase
+    public class ReportExportViewModel:ViewModelBase
     {
-        #region Fields 
+        #region Fields
         int count = 0;
         List<string> ListDefault;
-        string TableName = "Para_ProductStation";
-        StationSetService StationSetSer = new StationSetService();
+        ReportExportService ReportExSer = new ReportExportService();
+        string TableName = "config_PackingExportPara";
         #endregion
         #region Properties
-        private ObservableCollection<ProductStation> _displayInfo;
-
-        public ObservableCollection<ProductStation> DisplayInfo
-        {
-            get { return _displayInfo; }
-            set
-            {
-                _displayInfo = value;
-                RaisePropertyChanged(() => DisplayInfo);
-            }
-        }
         private List<string> _typeList;
 
         public List<string> TypeList
         {
             get { return _typeList; }
-            set { _typeList = value;RaisePropertyChanged(() => TypeList); }
+            set { _typeList = value; RaisePropertyChanged(() => TypeList); }
+        }
+        private ObservableCollection<PackingExportPara> _displayIfo;
+
+        public ObservableCollection<PackingExportPara> DisplayInfo
+        {
+            get { return _displayIfo; }
+            set { _displayIfo = value; RaisePropertyChanged(() => DisplayInfo); }
         }
 
 
@@ -53,15 +50,20 @@ namespace TypeManager.ViewModel
                 return new RelayCommand<string>((str) => ExecuteSearch(str));
             }
         }
-        public void ExecuteSearch(string productType)
+        void ExecuteSearch(string str)
         {
-            if (!string.IsNullOrEmpty(productType))
+            if (!string.IsNullOrEmpty(str))
             {
-                List<ProductStation> list = StationSetSer.Search(productType, TableName);
-                DisplayInfo = new ObservableCollection<ProductStation>(list);
+                List<PackingExportPara> list = ReportExSer.Search(str, TableName);
+                if (list.Count == 0)
+                {
+                    MessageBox.Show("查询无结果", "系统提示");
+                }
+                else
+                {
+                    DisplayInfo = new ObservableCollection<PackingExportPara>(list);
+                }
             }
-            else
-                System.Windows.MessageBox.Show("产品型号不能为空", "错误提示");
         }
         public RelayCommand<object> UpdateDB
         {
@@ -74,9 +76,9 @@ namespace TypeManager.ViewModel
         {
             if (obj != null)
             {
-                if (obj is ProductStation model)
+                if (obj is PackingExportPara model)
                 {
-                    int count = StationSetSer.UpdateDB(model, TableName);
+                    int count = ReportExSer.UpdateDB(model, TableName);
                     if (count == 1)
                         System.Windows.MessageBox.Show("更新数据库成功", "更新提示", System.Windows.MessageBoxButton.OK);
                     else
@@ -91,12 +93,15 @@ namespace TypeManager.ViewModel
         }
         #endregion
         #region Constructor
-        public StationSetViewModel()
+        public ReportExportViewModel()
         {
+            CurrentUser = FrmMain.CurrentUser;
+            CurrentPrivilege = GetPrivilege(CurrentUser);
             ListDefault = CommonMethods.ReadFromFile();
             TypeList = ListDefault;
         }
         #endregion
+
         #region InsertDB Area
         public RelayCommand<string> ShowInsertDBWindow
         {
@@ -111,13 +116,12 @@ namespace TypeManager.ViewModel
         /// <param name="str"></param>
         public void ExecuteShowInsertDBWindow(string str)
         {
-            //验证新型号填写是否为空
+            
             if (string.IsNullOrEmpty(str.Trim()))
             {
                 MessageBox.Show("请输入新型号名称", "错误提示");
                 return;
             }
-            //验证已在“型号参数”选项卡中添加对应新型号
             bool flag = false;
             foreach (string item in ListDefault)
             {
@@ -129,9 +133,9 @@ namespace TypeManager.ViewModel
                 MessageBox.Show("请先在“型号参数”选项卡添加对应型号！", "系统提示");
                 return;
             }
-            //验证数据库中是否已存在新型号数据
+
             bool IsTypeExist = false;
-            List<string> list = StationSetSer.GetTypeList(TableName);
+            List<string> list = ReportExSer.GetTypeList(TableName);
             foreach (string item in list)
             {
                 if (item == str.Trim())
@@ -143,14 +147,13 @@ namespace TypeManager.ViewModel
                 if (result == MessageBoxResult.Cancel)
                     return;
             }
-            //
             if (DisplayInfo == null)
             {
                 MessageBoxResult result = MessageBox.Show("当前列表数据为空，新型号所有数据需要手动输入，是否确认", "系统提示", MessageBoxButton.OKCancel);
                 if (result == MessageBoxResult.OK)
                 {
-                    StationSet window = new StationSet();
-                    window.tbNewType.Text = str;
+                    ReportExport window = new ReportExport();
+                    window.tbNewType.Text = str.Trim();
                     window.ShowDialog();
                 }
                 else
@@ -161,13 +164,13 @@ namespace TypeManager.ViewModel
             }
             else
             {
-                foreach (ProductStation item in DisplayInfo)
+                foreach (var item in DisplayInfo)
                 {
                     item.ProductType = str;
                 }
-                StationSet window = new StationSet();
-                window.tbNewType.Text = str;
-                window.lviewInfo.ItemsSource = DisplayInfo;
+                ReportExport window = new ReportExport();
+                window.tbNewType.Text = str.Trim();
+                window.lViewInfo.ItemsSource = DisplayInfo;
                 window.ShowDialog();
             }
 
@@ -181,8 +184,7 @@ namespace TypeManager.ViewModel
         }
         public void ExecuteInsertDB()
         {
-            List<ProductStation> list = DisplayInfo.ToList<ProductStation>();
-            CommonMethods.SqlBulkCopyInsert<ProductStation>(list, TableName);
+            CommonMethods.SqlBulkCopyInsert<PackingExportPara>(DisplayInfo.ToList<PackingExportPara>(), TableName);
             MessageBox.Show("数据插入成功", "系统提示");
         }
         #endregion
@@ -218,6 +220,29 @@ namespace TypeManager.ViewModel
                 comboBox.IsDropDownOpen = true;
             }
         }
+        #endregion
+        #region Interface Related
+        /// <summary>
+        /// 获取当前用户权限
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public UserPrivilege GetPrivilege(User user)
+        {
+            if (user.RoleName == "admin")
+                return UserPrivilege.admin;
+            else if (user.GroupName == "开发部")
+                return UserPrivilege.developer;
+            else
+                return UserPrivilege.others;
+        }
+        UserPrivilege _currentPrivilege;
+        public UserPrivilege CurrentPrivilege
+        {
+            get { return _currentPrivilege; }
+            set { _currentPrivilege = value; }
+        }
+        readonly User CurrentUser;
         #endregion
     }
 }
