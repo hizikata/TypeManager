@@ -18,7 +18,7 @@ using TypeManager.View;
 namespace TypeManager.ViewModel
 {
 
-    public class TypeParaViewModel : ViewModelBase
+    public class TypeParaViewModel : ViewModelBase,IGetPrivilege
     {
         public List<string> ListDefault;
         Repository Repository = new Repository();

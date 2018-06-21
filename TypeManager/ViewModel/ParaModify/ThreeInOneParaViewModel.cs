@@ -15,7 +15,7 @@ using TypeManager.View;
 
 namespace TypeManager.ViewModel
 {
-    public class ThreeInOneParaViewModel:ViewModelBase
+    public class ThreeInOneParaViewModel:ViewModelBase,IGetPrivilege
     {
         #region Fields
         int count = 0;

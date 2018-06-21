@@ -16,7 +16,7 @@ using TypeManager.DAL;
 
 namespace TypeManager.ViewModel
 {
-    public class SenParaSetViewModel : ViewModelBase
+    public class SenParaSetViewModel : ViewModelBase,IGetPrivilege
     {
         #region Fields
         int count = 0;

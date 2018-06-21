@@ -20,5 +20,6 @@ namespace TypeManager.Assist
         /// <param name="user"></param>
         /// <returns></returns>
         UserPrivilege GetPrivilege(User user);
+        bool IsEditable { get; set; }
     }
 }

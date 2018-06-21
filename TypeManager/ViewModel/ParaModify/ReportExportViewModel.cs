@@ -15,7 +15,7 @@ using TypeManager.View;
 
 namespace TypeManager.ViewModel
 {
-    public class ReportExportViewModel:ViewModelBase
+    public class ReportExportViewModel:ViewModelBase,IGetPrivilege
     {
         #region Fields
         int count = 0;

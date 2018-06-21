@@ -14,7 +14,7 @@ using TypeManager.View;
 
 namespace TypeManager.ViewModel
 {
-    public class MaterialSetViewModel:ViewModelBase
+    public class MaterialSetViewModel:ViewModelBase,IGetPrivilege
     {
         #region Fields
         int count = 0;

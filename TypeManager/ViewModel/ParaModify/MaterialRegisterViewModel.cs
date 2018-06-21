@@ -13,7 +13,7 @@ using TypeManager.View;
 
 namespace TypeManager.ViewModel
 {
-    public class MaterialRegisterViewModel : ViewModelBase
+    public class MaterialRegisterViewModel : ViewModelBase,IGetPrivilege
     {
         #region Fields
         MaterialRegisterService MaterialReSer = new MaterialRegisterService();

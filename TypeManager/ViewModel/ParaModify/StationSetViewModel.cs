@@ -16,7 +16,7 @@ using TypeManager.View;
 
 namespace TypeManager.ViewModel
 {
-    public class StationSetViewModel : ViewModelBase
+    public class StationSetViewModel : ViewModelBase,IGetPrivilege
     {
         #region Fields 
         int count = 0;
